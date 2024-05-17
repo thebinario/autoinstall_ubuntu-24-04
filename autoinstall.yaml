@@ -1,0 +1,49 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: pt_BR
+  timezone: America/Manaus
+  storage:
+    layout:
+      - name: root
+        use: entire
+        wipe: true
+
+  packages:
+    - ubuntu-desktop
+    - openssh-server
+    - build-essential
+    - curl
+    - git
+    - vim
+    - emacs
+    - vscode # Visual Studio Code (instalação via snap)
+    - gnome-tweaks # Para personalizar a interface do GNOME
+
+  snaps:
+    - name: code # Visual Studio Code
+
+  # Habilitar o usuário root com senha vazia (NÃO RECOMENDADO PARA PRODUÇÃO)
+  users:
+    - name: root
+      pass: '$6$aqP6n/H1KQ6gR9gR$x22skbobxY5R06FKZ2yU7.pQ8i03WHJoj8y92DA26MmRun2.bI/Xjnu1x5p1YlQ14K.tT2sqa98w0i2160'  # Hash da senha vazia
+      sudo: ALL=(ALL) ALL
+
+  late-commands:
+    - curtin in-target -- bash -c '
+        # Instalar Miniconda e Mamba
+        curl -sSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o ~/miniconda.sh &&
+        bash ~/miniconda.sh -b -p /opt/miniconda &&
+        rm ~/miniconda.sh &&
+        echo "PATH=/opt/miniconda/bin:$PATH" >> /etc/environment &&
+        /opt/miniconda/bin/conda install -y mamba &&
+        /opt/miniconda/bin/conda config --set auto_activate_base false &&
+        echo "conda activate" >> /root/.bashrc &&
+
+        # Instalar pacotes Python comuns (opcional)
+        /opt/miniconda/bin/mamba create -y -n dev python=3.10 numpy scipy matplotlib pandas jupyterlab &&
+
+        # Instalar outras ferramentas de desenvolvimento (opcional)
+        apt-get update &&
+        apt-get install -y docker.io docker-compose nodejs npm
+      '
