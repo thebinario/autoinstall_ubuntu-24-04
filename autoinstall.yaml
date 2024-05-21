@@ -17,11 +17,14 @@ autoinstall:
     - git
     - vim
     - emacs
-    - vscode # Visual Studio Code (instalação via snap)
-    - gnome-tweaks # Para personalizar a interface do GNOME
-
-  snaps:
-    - name: code # Visual Studio Code
+    - gnome-tweaks
+    - wget 
+    - gstreamer1.0-plugins-base # Plugins básicos do GStreamer
+    - gstreamer1.0-plugins-good # Plugins adicionais úteis
+    - gstreamer1.0-plugins-bad # Plugins menos testados, mas podem ser úteis
+    - gstreamer1.0-plugins-ugly # Plugins com problemas de licenciamento, use com cuidado
+    - gstreamer1.0-libav # Plugin para suporte a formatos de áudio/vídeo populares
+    - gstreamer1.0-tools # Ferramentas de linha de comando do GStreamer
 
   # Habilitar o usuário root com senha vazia (NÃO RECOMENDADO PARA PRODUÇÃO)
   users:
@@ -46,4 +49,41 @@ autoinstall:
         # Instalar outras ferramentas de desenvolvimento (opcional)
         apt-get update &&
         apt-get install -y docker.io docker-compose nodejs npm
+
+        # Instalar VMware Workstation Pro
+        wget -q https://www.vmware.com/go/getworkstation-linux --no-check-certificate -O ~/vmware.bin &&
+        chmod +x ~/vmware.bin &&
+        bash ~/vmware.bin &&
+        rm ~/vmware.bin &&
+
+        # Instalar IntelliJ IDEA
+        snap install intellij-idea-community --classic &&
+
+        # Instalar GitKraken
+        wget -q https://release.axocdn.com/linux/GitKraken-v8.7.0.deb --no-check-certificate -O ~/gitkraken.deb &&
+        dpkg -i ~/gitkraken.deb &&
+        rm ~/gitkraken.deb &&
+
+        # Instalar Microsoft Teams
+        curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&
+        sh -c "echo 'deb [arch=amd64] https://packages.microsoft.com/repos/ms-teams stable main' > /etc/apt/sources.list.d/teams.list" &&
+        apt-get update &&
+        apt-get install -y teams &&
+
+        # Instalar Skype
+        snap install skype --classic &&
+
+        # Instalar OneDrive
+        wget -q https://github.com/abraunegg/onedrive/releases/download/v2.4.22/onedrive_2.4.22-1_amd64.deb --no-check-certificate -O ~/onedrive.deb &&
+        dpkg -i ~/onedrive.deb &&
+        rm ~/onedrive.deb &&
+
+        # Instalar Android Studio
+        snap install android-studio --classic &&
+
+        # Instalar Obsidian
+        snap install obsidian &&
+
+        # Instalar Discord
+        snap install discord 
       '
